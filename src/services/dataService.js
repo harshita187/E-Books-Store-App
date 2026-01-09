@@ -1,7 +1,14 @@
 function getSession(){
-    const token = JSON.parse(sessionStorage.getItem("token"));
-    const cbid = JSON.parse(sessionStorage.getItem("cbid"));
-    return {token, cbid};
+    try {
+        const token = JSON.parse(sessionStorage.getItem("token"));
+        const cbid = JSON.parse(sessionStorage.getItem("cbid"));
+        return {token, cbid};
+    } catch(error) {
+        // If data is corrupted, clear it and return nulls
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("cbid");
+        return {token: null, cbid: null};
+    }
 }
 
 export async function getUser(){
