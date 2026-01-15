@@ -1,26 +1,21 @@
+import db from "../data/db.json";
+const { products, featured_products } = db;
+
 export async function getProductList(searchTerm){
-    const response = await fetch(`${process.env.REACT_APP_HOST}/444/products?name_like=${searchTerm ? searchTerm : ""}`);
-    if(!response.ok){
-        throw { message: response.statusText, status: response.status }; //eslint-disable-line
-    }
-    const data = await response.json()
-    return data;
+    if (!searchTerm) return products;
+    return products.filter(product => 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 }
 
 export async function getProduct(id){
-    const response = await fetch(`${process.env.REACT_APP_HOST}/444/products/${id}`);
-    if(!response.ok){
-        throw { message: response.statusText, status: response.status }; //eslint-disable-line
+    const product = products.find(p => p.id === Number(id));
+    if (!product) {
+        throw { message: "Product not found", status: 404 }; //eslint-disable-line
     }
-    const data = await response.json()
-    return data;
+    return product;
 }
 
 export async function getFeaturedList(){
-    const response = await fetch(`${process.env.REACT_APP_HOST}/444/featured_products`);
-    if(!response.ok){
-        throw { message: response.statusText, status: response.status }; //eslint-disable-line
-    }
-    const data = await response.json()
-    return data;
+    return featured_products;
 }

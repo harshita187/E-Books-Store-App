@@ -33,10 +33,10 @@ export const FilterProvider = ({children}) => {
     
     function sort(products){
         if(state.sortBy === "lowtohigh"){
-            return products.sort((a, b) => Number(a.price) - Number(b.price));
+            return [...products].sort((a, b) => Number(a.price) - Number(b.price));
         }
         if(state.sortBy === "hightolow"){
-            return products.sort((a, b) => Number(b.price) - Number(a.price));
+            return [...products].sort((a, b) => Number(b.price) - Number(a.price));
         }
         return products;
     }
