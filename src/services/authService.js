@@ -1,13 +1,23 @@
 import db from "../data/db.json";
 const { users } = db;
 
+function getUsers() {
+    const storedUsers = JSON.parse(sessionStorage.getItem("cb_users"));
+    return storedUsers || users; 
+}
+
+function saveUsers(userList) {
+    sessionStorage.setItem("cb_users", JSON.stringify(userList));
+}
+
 export async function login(authDetail){
-    const user = users.find(user => user.email === authDetail.email);
+    const userList = getUsers();
+    const user = userList.find(user => user.email === authDetail.email);
     
     if(!user){
         throw { message: "Cannot find user. Please register", status: 401 }; //eslint-disable-line
     }
-    // Simple password check mock - In real app, we would hash/check password
+    // Simple password check mock 
     if(user.password && user.password !== authDetail.password){
          throw { message: "Incorrect password", status: 401 }; //eslint-disable-line
     }
@@ -23,20 +33,21 @@ export async function login(authDetail){
 }
 
 export async function register(authDetail){
-    const existingUser = users.find(user => user.email === authDetail.email);
+    const userList = getUsers();
+    const existingUser = userList.find(user => user.email === authDetail.email);
     
     if(existingUser){
         throw { message: "User already exists", status: 400 }; //eslint-disable-line
     }
 
-    // "Create" user in memory (won't persist to file in static app)
     const newUser = {
         ...authDetail,
-        id: users.length + 1
+        id: userList.length + 1
     };
     
-    // Note: We can't push to the imported JSON file to persist it on the server
-    // But we can return success so the flow continues in the UI
+    // Save to session storage
+    userList.push(newUser);
+    saveUsers(userList);
 
     return {
         accessToken: "mock_token_123",
